@@ -1,21 +1,23 @@
 package model;
 
 public class Car {
-    private int id;
+    private long id;
     private String brand;
     private String model;
+    private Garage owner;
 
-    public Car(int id, String brand, String model) {
+    public Car(int id, String brand, String model, Garage owner) {
         this.id = id;
         this.brand = brand;
         this.model = model;
+        this.owner = owner;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -33,6 +35,14 @@ public class Car {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public Garage getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Garage owner) {
+        this.owner = owner;
     }
 
     @Override
