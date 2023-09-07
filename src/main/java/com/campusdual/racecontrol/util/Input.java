@@ -1,4 +1,4 @@
-package com.campusdual.socialnetwork.util;
+package com.campusdual.racecontrol.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
