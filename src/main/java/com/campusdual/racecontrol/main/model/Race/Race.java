@@ -1,15 +1,18 @@
-package model.Race;
+package com.campusdual.racecontrol.main.model.Race;
 
-import model.Car;
-import model.Garage;
+import com.campusdual.racecontrol.main.model.Car;
+import com.campusdual.racecontrol.main.model.Garage;
+import com.campusdual.racecontrol.main.model.RacingCar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Race {
     protected long id;
     protected String name;
-    protected List<Garage> garages;
-    protected List<Car> cars;
+    protected boolean finished = false;
+    protected List<Garage> garages = new ArrayList<>();
+    protected List<RacingCar> cars = new ArrayList<>();
 
     protected Car[] podium = new Car[3];
 
@@ -34,6 +37,14 @@ public abstract class Race {
         this.name = name;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
     public List<Garage> getGarages() {
         return garages;
     }
@@ -42,11 +53,11 @@ public abstract class Race {
         this.garages = garages;
     }
 
-    public List<Car> getCars() {
+    public List<RacingCar> getCars() {
         return cars;
     }
 
-    public void setCars(List<Car> cars) {
+    public void setCars(List<RacingCar> cars) {
         this.cars = cars;
     }
 
