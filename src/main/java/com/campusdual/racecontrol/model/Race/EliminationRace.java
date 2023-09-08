@@ -1,4 +1,4 @@
-package com.campusdual.racecontrol.main.model.Race;
+package com.campusdual.racecontrol.model.Race;
 
 public class EliminationRace extends Race {
     /*

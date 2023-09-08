@@ -1,8 +1,8 @@
-package com.campusdual.racecontrol.main.model.Race;
+package com.campusdual.racecontrol.model.Race;
 
-import com.campusdual.racecontrol.main.model.Car;
-import com.campusdual.racecontrol.main.model.Garage;
-import com.campusdual.racecontrol.main.model.RacingCar;
+import com.campusdual.racecontrol.model.Car;
+import com.campusdual.racecontrol.model.Garage;
+import com.campusdual.racecontrol.model.RacingCar;
 
 import java.util.ArrayList;
 import java.util.List;
