@@ -1,4 +1,4 @@
-package com.campusdual.racecontrol.main.model;
+package com.campusdual.racecontrol.model;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,19 +11,24 @@ public class Garage {
     private static final String GARAGE_ID = "id";
     private static final String GARAGE_NAME = "name";
     private static final String GARAGE_CARS = "cars";
+    private static long idCount = 0;
     private long id;
     private String name;
-    private List<Car> cars = new ArrayList<>();
+    private List<ScoreCar> cars = new ArrayList<>();
 
-    public Garage(long id, String name) {
-        this.id = id;
+    public Garage(String name) {
+        this.id = generateId();
         this.name = name;
     }
 
-    public Garage(long id, String name, List<Car> cars) {
-        this.id = id;
+    public Garage(String name, List<ScoreCar> cars) {
+        this.id = generateId();
         this.name = name;
         this.cars = cars;
+    }
+
+    private static long generateId(){
+        return Garage.idCount++;
     }
 
     public long getId() {
@@ -42,18 +47,21 @@ public class Garage {
         this.name = name;
     }
 
-    public List<Car> getCars() {
+    public List<ScoreCar> getCars() {
         return cars;
     }
 
-    public void setCars(List<Car> cars) {
+    public void setCars(List<ScoreCar> cars) {
         this.cars = cars;
     }
 
     public static Garage importGarage(JSONObject object){
         long id = (long)object.get(GARAGE_ID);
         String name = (String)object.get(GARAGE_NAME);
-        return new Garage(id, name);
+        Garage garage = new Garage(name);
+        garage.generateId();
+
+        return garage;
     }
 
     public JSONObject exportGarage(){
@@ -62,33 +70,69 @@ public class Garage {
         obj.put(GARAGE_NAME, getName());
 
         JSONArray jCarsArray = new JSONArray();
-        for (Car car : cars) {
-            jCarsArray.add(car.exportCar());
+        for (ScoreCar car : cars) {
+            jCarsArray.add(car.exportScoreCar());
         }
         obj.put(GARAGE_CARS, jCarsArray);
         return obj;
     }
 
-    public static void exportJSONToFile(JSONObject object, String filename){
+    public JSONArray exportGarages(ArrayList<Garage> garages){
+        JSONArray jsonArray = new JSONArray();
+
+        for (Garage g : garages){
+            jsonArray.add(g.exportGarage());
+        }
+
+        return jsonArray;
+    }
+
+    public static void exportJSONToFile(ArrayList<Garage> garages, String filename){
+        JSONArray jsonGarages = new JSONArray();
+
+        for (Garage g : garages){
+            jsonGarages.add(g.exportGarage());
+        }
         try (
                 FileWriter fw = new FileWriter(filename)
         ) {
-            fw.write(object.toJSONString());
+            fw.write(jsonGarages.toJSONString());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        Garage garagePaco = new Garage(1, "Garaje Paco");
-        Car car1 = new Car(1, "Seat", "Ibiza", garagePaco);
-        Car car2 = new Car(2, "Citroen", "Xsara", garagePaco);
-        Car car3 = new Car(3, "Opel", "Corsa", garagePaco);
+        Garage garagePaco = new Garage("Garaje Paco");
 
-        garagePaco.cars.add(car1);
-        garagePaco.cars.add(car2);
-        garagePaco.cars.add(car3);
+        ScoreCar car1 = new ScoreCar("Seat", "Ibiza");
+        ScoreCar car2 = new ScoreCar("Citroen", "Xsara");
+        ScoreCar car3 = new ScoreCar("Opel", "Corsa");
 
-        Garage.exportJSONToFile(garagePaco.exportGarage(), "garage.json");
+        car1.setGarageName(garagePaco.getName());
+        car2.setGarageName(garagePaco.getName());
+        car3.setGarageName(garagePaco.getName());
+
+        garagePaco.getCars().add(car1);
+        garagePaco.getCars().add(car2);
+        garagePaco.getCars().add(car3);
+
+        Garage tallerManolo = new Garage("Taller Manolo");
+        ScoreCar car4 = new ScoreCar("Volkswagen", "Polo");
+        ScoreCar car5 = new ScoreCar("Volkswagen", "Golf");
+        tallerManolo.getCars().add(car4);
+        tallerManolo.getCars().add(car5);
+
+        Garage escuderiaLoli = new Garage("Escuderia Loli");
+        ScoreCar car6 = new ScoreCar("Ford", "Mustang");
+        escuderiaLoli.getCars().add(car6);
+
+        ArrayList<Garage> garages = new ArrayList<>();
+        garages.add(garagePaco);
+        garages.add(tallerManolo);
+        garages.add(escuderiaLoli);
+
+        exportJSONToFile(garages, "garages.json");
+
     }
 }
