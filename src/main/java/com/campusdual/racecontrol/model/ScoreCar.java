@@ -1,10 +1,21 @@
-package com.campusdual.racecontrol;
+package com.campusdual.racecontrol.model;
 
 import com.campusdual.racecontrol.util.Input;
 import com.campusdual.racecontrol.util.RandomUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class ScoreCar implements Comparable<ScoreCar> {
     private static final double MAX_SPEED = 200;
+    public static final String CAR_ID = "id";
+    public static final String CAR_BRAND = "brand";
+    public static final String CAR_MODEL = "model";
+    public static final String CAR_OWNER = "garage";
+
+    private long id = -1;
     private String brand;
     private String model;
     private String garageName = "";
@@ -20,6 +31,20 @@ public class ScoreCar implements Comparable<ScoreCar> {
     public ScoreCar(String brand, String model) {
         this.brand = brand;
         this.model = model;
+    }
+
+    public ScoreCar(long id, String brand, String model) {
+        this.id = id;
+        this.brand = brand;
+        this.model = model;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getBrand() {
@@ -74,6 +99,41 @@ public class ScoreCar implements Comparable<ScoreCar> {
         distance += speedometer * 1000 / 60;
     }
 
+    public static Car importCar(JSONObject object){
+        String brand = (String)object.get(Car.CAR_BRAND);
+        String model = (String)object.get(Car.CAR_MODEL);
+        return new Car(brand, model);
+    }
+
+    public static JSONObject importJSONFile(String filename){
+        try(FileReader fr = new FileReader(filename)){
+            JSONParser parser = new JSONParser();
+            return (JSONObject)parser.parse(fr);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONObject exportScoreCar(){
+        JSONObject obj = new JSONObject();
+        obj.put(CAR_ID, getId());
+        obj.put(CAR_BRAND, getBrand());
+        obj.put(CAR_MODEL, getModel());
+        obj.put(CAR_OWNER, getGarageName());
+        return obj;
+    }
+
+    public static void exportJSONToFile(JSONObject object, String filename){
+        try (
+                FileWriter fw = new FileWriter(filename)
+        ) {
+            fw.write(object.toJSONString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
 
     @Override
