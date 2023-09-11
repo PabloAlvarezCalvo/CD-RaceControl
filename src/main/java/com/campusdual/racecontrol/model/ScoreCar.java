@@ -1,12 +1,12 @@
 package com.campusdual.racecontrol.model;
 
 import com.campusdual.racecontrol.util.Input;
+import com.campusdual.racecontrol.util.JsonUtils;
 import com.campusdual.racecontrol.util.RandomUtils;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class ScoreCar implements Comparable<ScoreCar> {
     private static final double MAX_SPEED = 200;
@@ -15,7 +15,8 @@ public class ScoreCar implements Comparable<ScoreCar> {
     public static final String CAR_MODEL = "model";
     public static final String CAR_OWNER = "garage";
 
-    private long id = -1;
+    private static long idCount = 0;
+    private long id = 0;
     private String brand;
     private String model;
     private String garageName = "";
@@ -24,19 +25,26 @@ public class ScoreCar implements Comparable<ScoreCar> {
     private double distance = 0.0d; //In meters
 
     public ScoreCar() {
+        this.id = generateId();
         this.brand = Input.string("Type the brand of the car:\n");
         this.model = Input.string("Type the model of the car:\n");
     }
 
     public ScoreCar(String brand, String model) {
+        this.id = generateId();
         this.brand = brand;
         this.model = model;
     }
 
-    public ScoreCar(long id, String brand, String model) {
-        this.id = id;
+    public ScoreCar(String brand, String model, String garageName) {
+        this.id = generateId();
         this.brand = brand;
         this.model = model;
+        this.garageName = garageName;
+    }
+
+    private long generateId(){
+        return ScoreCar.idCount++;
     }
 
     public long getId() {
@@ -99,21 +107,11 @@ public class ScoreCar implements Comparable<ScoreCar> {
         distance += speedometer * 1000 / 60;
     }
 
-    public static Car importCar(JSONObject object){
-        String brand = (String)object.get(Car.CAR_BRAND);
-        String model = (String)object.get(Car.CAR_MODEL);
-        return new Car(brand, model);
-    }
-
-    public static JSONObject importJSONFile(String filename){
-        try(FileReader fr = new FileReader(filename)){
-            JSONParser parser = new JSONParser();
-            return (JSONObject)parser.parse(fr);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public static ScoreCar importCar(JSONObject object){
+        String brand = (String)object.get(ScoreCar.CAR_BRAND);
+        String model = (String)object.get(ScoreCar.CAR_MODEL);
+        String garageName = (String)object.get(ScoreCar.CAR_OWNER);
+        return new ScoreCar(brand, model, garageName);
     }
 
     public JSONObject exportScoreCar(){
@@ -125,21 +123,11 @@ public class ScoreCar implements Comparable<ScoreCar> {
         return obj;
     }
 
-    public static void exportJSONToFile(JSONObject object, String filename){
-        try (
-                FileWriter fw = new FileWriter(filename)
-        ) {
-            fw.write(object.toJSONString());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
 
     @Override
     public String toString() {
-        return "ScoreCar{" +
-                "brand='" + brand + '\'' +
+        return "ScoreCar{id=" + id +
+                ", brand='" + brand + '\'' +
                 ", model='" + model + '\'' +
                 ", garageName='" + garageName + '\'' +
                 ", speed=" + speedometer +
@@ -147,20 +135,52 @@ public class ScoreCar implements Comparable<ScoreCar> {
     }
 
     public static void main(String[] args) {
-        //ScoreCar sc = new ScoreCar();
-        //System.out.println(sc);
+        Garage garagePaco = new Garage("Garaje Paco");
 
-        ScoreCar sc2 = new ScoreCar("Seat", "Ibiza");
-        ScoreCar sc3 = new ScoreCar("Opel", "Corsa");
+        ScoreCar car1 = new ScoreCar("Seat", "Ibiza");
+        ScoreCar car2 = new ScoreCar("Citroen", "Xsara");
+        ScoreCar car3 = new ScoreCar("Opel", "Corsa");
 
-        for (int i = 0; i < 120; i++){
-            sc2.drive();
-            sc3.drive();
+        car1.setGarageName(garagePaco.getName());
+        car2.setGarageName(garagePaco.getName());
+        car3.setGarageName(garagePaco.getName());
+
+        garagePaco.getCars().add(car1);
+        garagePaco.getCars().add(car2);
+        garagePaco.getCars().add(car3);
+        car1.setGarageName(garagePaco.getName());
+        car2.setGarageName(garagePaco.getName());
+        car3.setGarageName(garagePaco.getName());
+
+        Garage tallerManolo = new Garage("Taller Manolo");
+        ScoreCar car4 = new ScoreCar("Volkswagen", "Polo");
+        ScoreCar car5 = new ScoreCar("Volkswagen", "Golf");
+        tallerManolo.getCars().add(car4);
+        tallerManolo.getCars().add(car5);
+        car4.setGarageName(tallerManolo.getName());
+        car5.setGarageName(tallerManolo.getName());
+
+        Garage escuderiaLoli = new Garage("Escuderia Loli");
+        ScoreCar car6 = new ScoreCar("Ford", "Mustang");
+        escuderiaLoli.getCars().add(car6);
+        car6.setGarageName(escuderiaLoli.getName());
+
+
+        ArrayList<ScoreCar> cars = new ArrayList<>();
+        cars.addAll(garagePaco.getCars());
+        cars.addAll(tallerManolo.getCars());
+        cars.addAll(escuderiaLoli.getCars());
+
+        JSONObject jsonCars = new JSONObject();
+        JSONArray jsonArrayCars = new JSONArray();
+
+        for (ScoreCar c : cars){
+            jsonArrayCars.add(c.exportScoreCar());
         }
 
-        System.out.printf("SC2. Distance: %.2f m. Final speed: %.2f km/h.\n", sc2.distance, sc2.speedometer);
-        System.out.printf("SC3. Distance: %.2f m. Final speed: %.2f km/h.\n", sc3.distance, sc3.speedometer);
-        System.out.println("Winner: " + sc2.compareTo(sc3));
+        jsonCars.put("Cars", jsonArrayCars);
+
+        JsonUtils.exportJsonObjectToFile(jsonCars, "cars.json");
     }
 
 
