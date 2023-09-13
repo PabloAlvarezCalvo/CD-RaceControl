@@ -20,7 +20,7 @@ public class JsonUtils {
         }
     }
 
-    public static JSONObject importJSONFile(String filename){
+    public static JSONObject importJsonObjectFromFile(String filename){
         try(FileReader fr = new FileReader(filename)){
             JSONParser parser = new JSONParser();
             return (JSONObject)parser.parse(fr);

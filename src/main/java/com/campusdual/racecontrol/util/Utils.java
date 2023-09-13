@@ -1,5 +1,7 @@
 package com.campusdual.racecontrol.util;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +11,117 @@ public class Utils {
     private Utils(){}
     public static final Random random = new Random();
     public static final DecimalFormat dF = new DecimalFormat("#.##");
+
+    /**
+     * Method to initialize input data.
+     * @return input Buffered string data.
+     */
+    public static String init() {
+        String buffer = "";
+        InputStreamReader stream = new InputStreamReader(System.in);
+        BufferedReader reader = new BufferedReader(stream);
+        try {
+            buffer = reader.readLine();
+        } catch (Exception e) {
+            System.out.append("Dato no válido.");
+        }
+        return buffer;
+    }
+
+    /**
+     * Method to get an integer from input data.
+     * @return integer entered by the user.
+     */
+    public static int integer() {
+        return Utils.integer(null);
+    }
+
+    /**
+     * Method to get an integer from input data with a custom message.
+     * @param message custom message for the user.
+     * @return integer entered by the user.
+     */
+    public static int integer(String message) {
+        if (message != null) {
+            System.out.print(message);
+        }
+
+        try{
+            return Integer.parseInt(Utils.init());
+        } catch (NumberFormatException e){
+            System.out.println("El valor no es un número entero.");
+            return integer(message);
+        }
+    }
+
+
+    /**
+     * Method to get a real number from input data.
+     * @return real number entered by the user.
+     */
+    public static double real() {
+        return Utils.real(null);
+    }
+
+    /**
+     * Method to get a real number from input data with a custom message.
+     * @param message custom message for the user.
+     * @return real number entered by the user.
+     */
+    public static double real(String message) {
+        if (message != null) {
+            System.out.print(message);
+        }
+        try{
+
+            return Double.parseDouble(Utils.init());
+        } catch (NumberFormatException e){
+            System.out.println("El valor no es un número real.");
+            return real(message);
+        }
+    }
+
+    /**
+     * Method to get a text string from input data.
+     * @return text string entered by the user.
+     */
+    public static String string() {
+        return Utils.string(null);
+    }
+
+
+    /**
+     * Method to get a text string from input data with a custom message.
+     * @param message custom message for the user.
+     * @return text string entered by the user.
+     */
+    public static String string(String message) {
+        if (message != null) {
+            System.out.print(message);
+        }
+        return Utils.init();
+    }
+
+    /**
+     * Method to get a character from input data.
+     * @return character entered by the user.
+     */
+    public static char character() {
+        return Utils.character(null);
+    }
+
+    /**
+     * Method to get a character from input data with a custom message.
+     * @param message custom message for the user.
+     * @return character entered by the user.
+     */
+    public static char character(String message) {
+        if (message != null) {
+            System.out.print(message);
+        }
+        String valor = Utils.init();
+        return valor.charAt(0);
+    }
 
     /**
      * Formatea el {@link Double} que se pasa por parámetro, con el formato #.##
@@ -81,7 +194,7 @@ public class Utils {
         }
         System.out.print(builder.toString());
         if (wait) {
-            Input.string("\nPulse \"Enter\" para continuar...");
+            Input.string("\nPress \"Enter\" to continue...");
         }
     }
 
@@ -152,14 +265,14 @@ public class Utils {
         }
         StringBuilder builder = new StringBuilder();
         if (!multipleReturn) {
-            builder.append("\nSeleccione el elemento deseado");
+            builder.append("\nSelect the desired element");
             if (cancel) {
-                builder.append(", 0 para salir");
+                builder.append(", 0 to exit");
             }
             builder.append(": ");
             int selected = Input.integer(builder.toString());
             while (!Utils.checkSelection(selected, list.size()) && (selected != 0)) {
-                selected = Input.integer("La opción no es válida, por favor, escoje una opción válida: ");
+                selected = Input.integer("Invalid option, please, choose a valid option: ");
             }
 
             if (selected == 0) {
@@ -170,9 +283,9 @@ public class Utils {
             return toRet;
 
         } else {
-            builder.append("\nSeleccione los elementos deseados, separándolos por , ");
+            builder.append("\nSelect the required elements, separated by , ");
             if (cancel) {
-                builder.append("(0 para salir)");
+                builder.append("(0 to exit)");
             }
             builder.append(": ");
             String auxSelected = Input.string(builder.toString());
