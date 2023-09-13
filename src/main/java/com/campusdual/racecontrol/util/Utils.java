@@ -354,7 +354,7 @@ public class Utils {
         }
         System.out.print(builder);
         if (wait) {
-            Utils..string("\nPress \"Enter\" to continue...");
+            Utils.string("\nPress \"Enter\" to continue...");
         }
     }
 }
