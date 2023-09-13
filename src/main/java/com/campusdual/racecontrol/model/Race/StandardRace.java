@@ -37,14 +37,13 @@ public class StandardRace extends Race implements Runnable {
             if (garages.size() == 1) {
 
                 for (ScoreCar c : garages.get(0).getCars()) {
-                    //cars.add(new RacingCar(c.getId(), c.getBrand(), c.getModel(), c.getGarage()));
                     cars.add(new ScoreCar(c.getBrand(), c.getModel()));
                 }
             } else {
                 for (Garage g : garages) {
                     int index = (int) (Math.random() * g.getCars().size());
                     ScoreCar currentCar = g.getCars().get(index);
-                    //cars.add(new RacingCar(currentCar.getId(), currentCar.getBrand(), currentCar.getModel(), currentCar.getGarage()));
+                    cars.add(currentCar);
                 }
             }
 
