@@ -7,10 +7,11 @@ import org.json.simple.JSONObject;
 import java.util.*;
 
 public class Garage {
-    private static final String GARAGE_TAG = "garages";
+    private static final String GARAGES_TAG = "garages";
     private static final String GARAGE_ID = "id";
     private static final String GARAGE_NAME = "name";
     private static final String GARAGE_CARS = "cars";
+    private static final String CARS_FILE = "cars.json";
     private static long idCount = 0;
     private long id;
     private String name;
@@ -95,26 +96,17 @@ public class Garage {
             jsonGarages.add(g.exportGarage());
         }
 
-        jsonObject.put(GARAGE_TAG, jsonGarages);
+        jsonObject.put(GARAGES_TAG, jsonGarages);
 
         JsonUtils.exportJsonObjectToFile(jsonObject, filename);
     }
 
     public static void main(String[] args) {
-        List<ScoreCar> cars = new ArrayList<>();
         Garage garagePaco = new Garage("Garaje Paco");
         Garage tallerManolo = new Garage("Taller Manolo");
         Garage escuderiaLoli = new Garage("Escuderia Loli");
 
-        JSONObject jsonObject = JsonUtils.importJSONFile("cars.json");
-
-        assert jsonObject != null;
-        JSONArray carJsonArray = (JSONArray) jsonObject.get("Cars");
-        System.out.println(carJsonArray);
-
-        for (Object o : carJsonArray) {
-            cars.add(ScoreCar.importCar((JSONObject) o));
-        }
+        List<ScoreCar> cars = ScoreCar.importScoreCarsFromJsonFile(CARS_FILE);
 
         for (ScoreCar sc : cars){
             if (sc.getGarageName().equals(garagePaco.getName())){
@@ -142,5 +134,13 @@ public class Garage {
 
         exportGaragesToJSONFile(garages, "garages.json");
 
+    }
+
+    @Override
+    public String toString() {
+        return "Garage{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
