@@ -1,8 +1,8 @@
 package com.campusdual.racecontrol.model;
 
-import com.campusdual.racecontrol.util.Input;
 import com.campusdual.racecontrol.util.JsonUtils;
 import com.campusdual.racecontrol.util.RandomUtils;
+import com.campusdual.racecontrol.util.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class ScoreCar implements Comparable<ScoreCar> {
     private static final double MAX_SPEED = 200;
+    private static final String CARS_TAG = "cars";
     public static final String CAR_ID = "id";
     public static final String CAR_BRAND = "brand";
     public static final String CAR_MODEL = "model";
@@ -26,8 +27,8 @@ public class ScoreCar implements Comparable<ScoreCar> {
 
     public ScoreCar() {
         this.id = generateId();
-        this.brand = Input.string("Type the brand of the car:\n");
-        this.model = Input.string("Type the model of the car:\n");
+        this.brand = Utils.string("Type the brand of the car:\n");
+        this.model = Utils.string("Type the model of the car:\n");
     }
 
     public ScoreCar(String brand, String model) {
@@ -38,6 +39,13 @@ public class ScoreCar implements Comparable<ScoreCar> {
 
     public ScoreCar(String brand, String model, String garageName) {
         this.id = generateId();
+        this.brand = brand;
+        this.model = model;
+        this.garageName = garageName;
+    }
+
+    public ScoreCar(long id, String brand, String model, String garageName) {
+        this.id = id;
         this.brand = brand;
         this.model = model;
         this.garageName = garageName;
@@ -59,8 +67,16 @@ public class ScoreCar implements Comparable<ScoreCar> {
         return brand;
     }
 
+    public void setBrand(String brand){
+        this.brand = brand;
+    }
+
     public String getModel() {
         return model;
+    }
+
+    public void setModel(String model){
+        this.model = model;
     }
 
     public String getGarageName() {
@@ -107,7 +123,12 @@ public class ScoreCar implements Comparable<ScoreCar> {
         distance += speedometer * 1000 / 60;
     }
 
-    public static ScoreCar importCar(JSONObject object){
+    public void restart() {
+        this.speedometer = 0.0d;
+        this.distance = 0.0d;
+    }
+
+    public static ScoreCar importScoreCar(JSONObject object){
         String brand = (String)object.get(ScoreCar.CAR_BRAND);
         String model = (String)object.get(ScoreCar.CAR_MODEL);
         String garageName = (String)object.get(ScoreCar.CAR_OWNER);
@@ -123,6 +144,31 @@ public class ScoreCar implements Comparable<ScoreCar> {
         return obj;
     }
 
+    public static ArrayList<ScoreCar> importScoreCarsFromJsonFile(String filename){
+        ArrayList<ScoreCar> cars = new ArrayList<>();
+
+        JSONObject object = JsonUtils.importJsonObjectFromFile(filename);
+        JSONArray carJsonArray = (JSONArray) object.get(CARS_TAG);
+
+
+        for (Object o : carJsonArray) {
+            cars.add(ScoreCar.importScoreCar((JSONObject) o));
+        }
+
+        return cars;
+    }
+
+    public static void exportScoreCarsToJsonFile(ArrayList<ScoreCar> cars, String filename){
+        JSONObject jsonCars = new JSONObject();
+        JSONArray jsonArrayCars = new JSONArray();
+
+        for (ScoreCar c : cars){
+            jsonArrayCars.add(c.exportScoreCar());
+        }
+
+        jsonCars.put("Cars", jsonArrayCars);
+        JsonUtils.exportJsonObjectToFile(jsonCars, filename);
+    }
 
     @Override
     public String toString() {
@@ -171,16 +217,7 @@ public class ScoreCar implements Comparable<ScoreCar> {
         cars.addAll(tallerManolo.getCars());
         cars.addAll(escuderiaLoli.getCars());
 
-        JSONObject jsonCars = new JSONObject();
-        JSONArray jsonArrayCars = new JSONArray();
-
-        for (ScoreCar c : cars){
-            jsonArrayCars.add(c.exportScoreCar());
-        }
-
-        jsonCars.put("Cars", jsonArrayCars);
-
-        JsonUtils.exportJsonObjectToFile(jsonCars, "cars.json");
+        exportScoreCarsToJsonFile(cars, "cars.json");
     }
 
 
