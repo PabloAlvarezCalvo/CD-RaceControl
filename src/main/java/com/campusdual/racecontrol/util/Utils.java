@@ -194,7 +194,7 @@ public class Utils {
         }
         System.out.print(builder.toString());
         if (wait) {
-            Input.string("\nPress \"Enter\" to continue...");
+            Utils.string("\nPress \"Enter\" to continue...");
         }
     }
 
@@ -270,9 +270,9 @@ public class Utils {
                 builder.append(", 0 to exit");
             }
             builder.append(": ");
-            int selected = Input.integer(builder.toString());
+            int selected = Utils.integer(builder.toString());
             while (!Utils.checkSelection(selected, list.size()) && (selected != 0)) {
-                selected = Input.integer("Invalid option, please, choose a valid option: ");
+                selected = Utils.integer("Invalid option, please, choose a valid option: ");
             }
 
             if (selected == 0) {
@@ -288,7 +288,7 @@ public class Utils {
                 builder.append("(0 to exit)");
             }
             builder.append(": ");
-            String auxSelected = Input.string(builder.toString());
+            String auxSelected = Utils.string(builder.toString());
             auxSelected = auxSelected.replace(" ", "");
             String[] split = auxSelected.split(",");
             int[] selectionIndex = Utils.parseIntArray(split);
@@ -354,7 +354,7 @@ public class Utils {
         }
         System.out.print(builder);
         if (wait) {
-            Input.string("\nPress \"Enter\" to continue...");
+            Utils..string("\nPress \"Enter\" to continue...");
         }
     }
 }
